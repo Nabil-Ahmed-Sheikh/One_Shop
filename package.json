@@ -1,0 +1,38 @@
+{
+  "name": "oneshop",
+  "version": "1.0.0",
+  "description": "MERN shopping site",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node backend/server.js",
+    "server": "nodemon backend/server",
+    "client": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "data:import": "node backend/seeder",
+    "data:destroy": "node backend/seeder -d"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nabil-Ahmed-Sheikh/One_Shop.git"
+  },
+  "author": "Nabil Ahmed",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nabil-Ahmed-Sheikh/One_Shop/issues"
+  },
+  "homepage": "https://github.com/Nabil-Ahmed-Sheikh/One_Shop#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "colors": "^1.4.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-async-handler": "^1.1.4",
+    "mongoose": "^5.13.5"
+  },
+  "devDependencies": {
+    "concurrently": "^6.2.0",
+    "nodemon": "^2.0.12"
+  }
+}
