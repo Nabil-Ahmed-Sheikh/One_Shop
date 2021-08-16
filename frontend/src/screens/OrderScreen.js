@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Row, Col, ListGroup, Image, Card } from "react-bootstrap";
-import CheckoutSteps from "../components/CheckoutSteps";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
-import { getOrderDetails } from "../actions/orderActions";
+import { getOrderDetails, payOrder } from "../actions/orderActions";
+import StripeButton from "../components/StripeButton";
 
 const OrderScreen = ({ match }) => {
   const orderId = match.params.id;
@@ -14,6 +14,9 @@ const OrderScreen = ({ match }) => {
 
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, loading, error } = orderDetails;
+
+  const orderPay = useSelector((state) => state.orderPay);
+  const { loading: loadingPay, success: successPay } = orderPay;
 
   if (!loading) {
     // Calculate Price
@@ -26,11 +29,26 @@ const OrderScreen = ({ match }) => {
     );
   }
 
+  const pay = async (token) => {
+    const { id, email, created } = token;
+    const status = "COMPLETED";
+    const update_time = new Date(created * 1000);
+
+    const paymentResult = {
+      id,
+      status,
+      update_time,
+      email,
+    };
+
+    dispatch(payOrder(orderId, paymentResult));
+  };
+
   useEffect(() => {
-    if (!order || order._id !== orderId) {
+    if (!order || successPay || order._id !== orderId) {
       dispatch(getOrderDetails(orderId));
     }
-  }, [dispatch, order, orderId]);
+  }, [successPay]);
 
   return loading ? (
     <Loader />
@@ -143,6 +161,15 @@ const OrderScreen = ({ match }) => {
                   <Col>${order.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
+              {loadingPay ? (
+                <Loader />
+              ) : order.isPaid ? null : (
+                <ListGroup.Item>
+                  <Row>
+                    <StripeButton price={order.totalPrice} pay={pay} />
+                  </Row>
+                </ListGroup.Item>
+              )}
             </ListGroup>
           </Card>
         </Col>
